@@ -1,0 +1,28 @@
+{
+	"name": "CIDTrackingSubgraph",
+	"license": "UNLICENSED",
+	"scripts": {
+		"codegen": "graph codegen --output-dir src/types/",
+		"build": "graph build",
+		"deploy:matic": "yarn prepare:matic && yarn matic",
+		"deploy:mumbai": "yarn prepare:mumbai && yarn mumbai",
+		"matic": "graph deploy --node https://api.thegraph.com/deploy/ alexandas/maticcidtrackingsubgraph",
+		"mumbai": "graph deploy --node https://api.thegraph.com/deploy/ alexandas/mumbaicidtrackingsubgraph",
+		"prepare:matic": "mustache config/matic.json subgraph.template.yaml > subgraph.yaml",
+		"prepare:mumbai": "mustache config/mumbai.json subgraph.template.yaml > subgraph.yaml",
+		"create-local": "graph create --node http://localhost:8020/ CIDTracking",
+		"remove-local": "graph remove --node http://localhost:8020/ CIDTracking",
+		"deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 CIDTracking"
+	},
+	"devDependencies": {
+		"@graphprotocol/graph-cli": "0.25.2",
+		"@graphprotocol/graph-ts": "0.24.1",
+		"@typescript-eslint/eslint-plugin": "^5.9.1",
+		"@typescript-eslint/parser": "^5.9.1",
+		"eslint": "^8.7.0",
+		"eslint-config-prettier": "^8.3.0",
+		"prettier": "^2.5.1",
+		"typescript": "^4.5.4",
+		"mustache": "^3.1.0"
+	}
+}

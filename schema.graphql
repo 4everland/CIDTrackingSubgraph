@@ -1,0 +1,25 @@
+type Manager @entity {
+	id: ID!
+	address: Bytes!
+	status: String!
+}
+
+type Balance @entity {
+	id: ID!
+	account: Bytes
+	total: BigInt
+	cost: BigInt	
+	expiration: BigInt
+}
+
+type CIDTrace @entity {
+	id: ID!
+	account: Bytes!
+	cid: String!
+	size: BigInt!
+	originalSize: BigInt!
+	expiration: BigInt!
+	status: String!
+	txHash: Bytes!
+	timestamp: BigInt!
+}

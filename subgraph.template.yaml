@@ -1,0 +1,38 @@
+specVersion: 0.0.4
+description: CID Tracking for {{networkname}}
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: CIDTracking
+    network: {{network}}
+    source:
+      address: '{{contractAddress}}'
+      abi: CIDTracking
+      startBlock: {{startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - CIDTracking
+      abis:
+        - name: CIDTracking
+          file: ./abis/CIDTracking.json
+      eventHandlers:
+        - event: AddManager(indexed address)
+          handler: handleAddManager
+        - event: RemoveManager(indexed address)
+          handler: handleRemoveManager
+        - event: FreeBalance(indexed bytes32,uint256,uint256,uint256)
+          handler: handleFreeBalance
+        - event: SyncStorage(indexed bytes32,uint256,uint256)
+          handler: handleSyncStorage
+        - event: Insert(indexed bytes32,string,uint256,uint256)
+          handler: handleInsert
+        - event: Remove(indexed bytes32,string,uint256,uint256)
+          handler: handleRemove
+        - event: Update(indexed bytes32,string,uint256,uint256,uint256)
+          handler: handleUpdate
+      file: ./src/CIDTracking.ts
+  

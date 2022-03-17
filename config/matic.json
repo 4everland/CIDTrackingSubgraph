@@ -1,0 +1,6 @@
+{
+	"network": "matic",
+	"networkname": "matic",
+	"startBlock": 23425248,
+	"contractAddress": "0x05b03C4b1281D45E69323BBab0dc6361A312C8d4"
+}
