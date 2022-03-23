@@ -8,7 +8,7 @@ export function handleAddManager(event: AddManager): void {
 	if (!manager) {
 		manager = new Manager(managerAddress)
 		manager.address = event.params.manager
-		manager.status = "added"
+		manager.status = "Added"
 		manager.save()
 	}
 }
