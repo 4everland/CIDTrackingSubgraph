@@ -20,6 +20,12 @@ type CIDTrace @entity {
 	originalSize: BigInt!
 	expiration: BigInt!
 	status: String!
+}
+
+type CIDRecord @entity {
+	id: ID!
+	trace: CIDTrace!
 	txHash: Bytes!
 	timestamp: BigInt!
+	block: BigInt!
 }

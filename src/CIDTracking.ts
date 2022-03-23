@@ -1,6 +1,6 @@
-import { BigInt } from '@graphprotocol/graph-ts'
+import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts'
 import { AddManager, RemoveManager, FreeBalance, SyncStorage, Insert, Remove, Update } from './types/CIDTracking/CIDTracking'
-import { Manager, Balance, CIDTrace } from './types/schema'
+import { Manager, Balance, CIDTrace, CIDRecord } from './types/schema'
 
 export function handleAddManager(event: AddManager): void {
 	const managerAddress = event.params.manager.toHex()
@@ -53,30 +53,29 @@ export function handleInsert(event: Insert): void {
 	let trace = CIDTrace.load(id)
 	if (!trace) {
 		trace = new CIDTrace(id)
-		trace.account = event.params.to
-		trace.cid = event.params.cid
-		trace.size = event.params.size
-		trace.expiration = event.params.expiration
-		trace.originalSize = BigInt.fromU32(0)
-		trace.timestamp = event.block.timestamp
-		trace.txHash = event.transaction.hash
-		trace.status = "Inserted"
-		trace.save()
 	}
+	trace.account = event.params.to
+	trace.cid = event.params.cid
+	trace.size = event.params.size
+	trace.expiration = event.params.expiration
+	trace.originalSize = BigInt.fromU32(0)
+	trace.status = "Inserted"
+	trace.save()
+	saveRecord(id, event.transaction.hash, event.block)
+
 }
 
 export function handleRemove(event: Remove): void {
 	const id = `${event.params.to.toHex()}-${event.params.cid}`
 	let trace = CIDTrace.load(id)
-	if (trace) {
+	if (!trace) {
 		trace = new CIDTrace(id)
-		trace.expiration = event.params.expiration
-		trace.originalSize = BigInt.fromU32(0)
-		trace.timestamp = event.block.timestamp
-		trace.txHash = event.transaction.hash
-		trace.status = "Removed"
-		trace.save()
 	}
+	trace.expiration = event.params.expiration
+	trace.originalSize = BigInt.fromU32(0)
+	trace.status = "Removed"
+	trace.save()
+	saveRecord(id, event.transaction.hash, event.block)
 }
 
 export function handleUpdate(event: Update): void {
@@ -87,10 +86,17 @@ export function handleUpdate(event: Update): void {
 		trace.expiration = event.params.expiration
 		trace.size = event.params.size
 		trace.originalSize = event.params.originalSize
-		trace.timestamp = event.block.timestamp
-		trace.txHash = event.transaction.hash
 		trace.status = "Updated"
 		trace.save()
 	}
+	saveRecord(id, event.transaction.hash, event.block)
 }
 
+function saveRecord(traceId: string, txHash: Bytes, block: ethereum.Block): void {
+	const record = new CIDRecord(`${txHash}-${traceId}`)
+	record.trace = traceId
+	record.txHash = txHash
+	record.timestamp = block.timestamp
+	record.block = block.number
+	record.save()
+}
